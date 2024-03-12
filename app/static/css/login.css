@@ -2,22 +2,57 @@ body{
     background-color: lightblue;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: top;
     height: 100vh;
     margin: 0;
 }
 
+h2{
+    font-size: 40px;
+}
+
 .login-div {
-    text-align: center;
+    text-align: left;
     border: 1px solid #ccc;
     padding: 20px;
     border-radius: 5px;
     background-color: white;
-    height: 624px;
-    width: 550px;
+    height: 524px;
+    width: 450px;
+    margin-top:100px;
 }
+
+.form-field{
+    width: 100%;
+    margin-left: 20px;
+    margin-right: 20px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.form-field input {
+    max-width: 100%;
+    max-height: 100%;
+    width: 80%;
+    height: 20%;
+    box-sizing: border-box; /* Para incluir el padding en el ancho total */
+    margin-bottom: 10px; /* Añade un margen inferior para separar los inputs */
+    margin-right: 20px;
+}
+
 
 .login-form{
     background-color: green;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
+.button{
+    width: 40%;
+    height: 50%;
+    font-size: 20px;
+    margin-left: 20px;
+    margin-top: 30px;
 }
