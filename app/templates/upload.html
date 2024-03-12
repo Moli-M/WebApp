@@ -1,0 +1,9 @@
+{% extends './base.html' %}
+
+{% block contenido %}
+    <h2>Subir Archivo</h2>
+    <form action="/procesar" method="post">
+        <input type="file" name="archivo" accept=".txt" required>
+        <button type="submit">Procesar Archivo</button>
+    </form>
+{% endblock %}

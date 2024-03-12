@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css')}}">
+    <title>{{data.titulo}}</title>
+</head>
+<body>
+    <div class="header">
+        <nav>
+            <a href="{{ url_for('index') }}">index</a>
+            <a href="{{ url_for('contacto') }}">contacto</a>
+            <a href="{{ url_for('lenguajes') }}">lenguajes</a>
+        </nav>
+    </div>
+
+    {% block contenido %}
+    {% endblock %}
+    <!--<script src="{{ url_for('static', filename='js/index.js')}}"></script>-->
+</body>
+</html>
