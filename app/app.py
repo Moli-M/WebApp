@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User
+from models.user import User, db
 
 
 app = Flask(__name__)
@@ -18,7 +18,11 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+with app.app_context():
+    db.create_all()
+
 @app.route('/')
+@login_required
 def index():
     #return "prueba"
     
@@ -40,7 +44,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -57,6 +61,7 @@ def login():
     return render_template('login.html', data=data)
 
 @app.route('/upload')
+@login_required
 def upload():
     data={
         'titulo': 'Upload'
@@ -64,6 +69,7 @@ def upload():
     return render_template('upload.html', data=data)
 
 @app.route('/procesar', methods=['POST'])
+@login_required
 def procesar():
     if 'archivo' not in request.files:
         return redirect(request.url)
