@@ -11,6 +11,12 @@
         <nav>
             <a href="{{ url_for('index') }}">index</a>
         </nav>
+        {% if current_user.is_authenticated %}
+            <p>Usuario: {{ current_user.username }}</p>
+            <form action="{{ url_for('logout') }}" method="POST">
+                <input type="submit" value="Cerrar sesión">
+            </form>
+        {% endif %}
     </div>
 
     {% block contenido %}

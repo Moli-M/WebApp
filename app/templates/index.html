@@ -2,8 +2,17 @@
 
 {% block contenido %}
 
+<h2>Subir Archivo</h2>
+<form action="/procesar" method="post" enctype="multipart/form-data">
+    <input type=file name=archivo required>
+    <input type=submit value=Subir>
+</form>
+
+<h2>Resultado</h2>
 <p>
-    {{data.encabezado}}
+    {% if data.res %}
+        {{ data.res }}
+    {% endif %}
 </p>
 
 {% endblock %}

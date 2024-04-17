@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.user import User, db
@@ -13,6 +13,7 @@ app.secret_key = 'test'
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -22,7 +23,6 @@ with app.app_context():
     db.create_all()
 
 @app.route('/')
-@login_required
 def index():
     #return "prueba"
     
@@ -37,6 +37,17 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if(password != confirm_password):
+            flash('Las contraseñas no coinciden.', 'error')
+            return redirect(url_for('register'))
+        
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            flash('El usuario ya existe.', 'error')
+            return redirect(url_for('register'))
+
         hashed_password = generate_password_hash(password)
         new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
@@ -54,11 +65,18 @@ def login():
             login_user(user)
             return redirect(url_for('index'))
         else:
-            return 'Login fallido. Por favor, verifica tus credenciales.'
+            #return 'Login fallido. Por favor, verifica tus credenciales.'
+            flash('Login fallido. Por favor, verifica tus credenciales.', 'error')
     data={
         'titulo': 'Login',
     }
     return render_template('login.html', data=data)
+
+@app.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route('/upload')
 @login_required
@@ -68,37 +86,42 @@ def upload():
     }
     return render_template('upload.html', data=data)
 
-@app.route('/procesar', methods=['POST'])
+@app.route('/procesar', methods=['POST', 'GET'])
 @login_required
 def procesar():
-    if 'archivo' not in request.files:
-        return redirect(request.url)
+    if request.method == 'POST':
+        if 'archivo' not in request.files:
+            return redirect(url_for('index'))
 
-    archivo = request.files['archivo']
+        archivo = request.files['archivo'] 
 
-    if archivo.filename == '':
-        return redirect(request.url)
+        if archivo.filename == '':
+            return redirect(request.url) 
+        if archivo and (archivo.filename.endswith('.txt') or archivo.filename.endswith('.csv')):
+            # Guardar el archivo temporalmente
+            archivo_path = os.path.join('archivos_temporales', archivo.filename)
+            archivo.save(".\\csv\\"+archivo.filename)
 
-    if archivo and archivo.filename.endswith('.txt'):
-        # Guardar el archivo temporalmente
-        archivo_path = os.path.join('archivos_temporales', archivo.filename)
-        archivo.save(archivo_path)
+            # Ejecutar el script de Python con el archivo como argumento
+            resultado_script = ejecutar_script(archivo_path)
 
-        # Ejecutar el script de Python con el archivo como argumento
-        resultado_script = ejecutar_script(archivo_path)
+            # Puedes hacer algo con el resultado del script, como mostrarlo en la página
+            data = {
+                'titulo': 'Resultado del script',	
+                'res': resultado_script
+            }
+            return render_template("index.html", data = data)
 
-        # Puedes hacer algo con el resultado del script, como mostrarlo en la página
-
-        return f'Resultado del script: {resultado_script}'
-
-    return 'Formato de archivo no permitido. Por favor, sube un archivo .txt.'
+        return 'Formato de archivo no permitido. Por favor, sube un archivo .txt.'
+    else:
+        return f"s"
 
 def ejecutar_script(archivo_path):
     # Aquí puedes ejecutar el script de Python que quieras
     # En este caso, simplemente leemos el archivo y devolvemos su contenido
-    with open(archivo_path, 'r') as archivo:
-        return archivo.read()
-    
+    #with open(archivo_path, 'r') as archivo:
+     #   return archivo.read()
+    return "recibido"
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)
