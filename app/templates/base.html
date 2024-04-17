@@ -4,20 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css')}}">
+    <script src="{{ url_for('static', filename='js/index.js')}}"></script>
+    <script src="https://kit.fontawesome.com/681de42033.js" crossorigin="anonymous"></script>
     <title>{{data.titulo}}</title>
 </head>
 <body>
     <div class="header">
         <nav>
-            <a href="{{ url_for('index') }}">index</a>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('history') }}">Historial</a>
         </nav>
-        {% if current_user.is_authenticated %}
-            <p>Usuario: {{ current_user.username }}</p>
-            <form action="{{ url_for('logout') }}" method="POST">
-                <input type="submit" value="Cerrar sesión">
-            </form>
-        {% endif %}
+        <div class="buttons">
+            {% if current_user.is_authenticated %}
+                <form action="{{ url_for('logout') }}" method="POST">
+                    <input type="submit" value="Cerrar sesión">
+                </form>
+            {% endif %}
+            {% if not current_user.is_authenticated %}
+            <div class="auth-buttons">
+                <form action="{{ url_for('login') }}" method="GET">
+                    <input type="submit" value="Iniciar sesión">
+                </form>
+                <form action="{{ url_for('register') }}" method="GET">
+                    <input type="submit" value="Registrarse">
+                </form>
+            </div>
+
+            {% endif %}
+        </div>
+        <button class="fa-solid fa-user icon fa-3x" onmouseover="showMenu()" onmouseout="hideMenu()"></i>
+
     </div>
+
+
+    
 
     {% block contenido %}
     {% endblock %}

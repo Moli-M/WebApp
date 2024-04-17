@@ -32,6 +32,13 @@ def index():
     }
     return render_template('index.html', data=data)
 
+@app.route('/history')
+def history():
+    data={
+        'titulo': 'Historial'
+    }
+    return render_template('history.html', data=data)
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -99,7 +106,7 @@ def procesar():
             return redirect(request.url) 
         if archivo and (archivo.filename.endswith('.txt') or archivo.filename.endswith('.csv')):
             # Guardar el archivo temporalmente
-            archivo_path = os.path.join('archivos_temporales', archivo.filename)
+            archivo_path = os.path.join('csv', archivo.filename)
             archivo.save(".\\csv\\"+archivo.filename)
 
             # Ejecutar el script de Python con el archivo como argumento
@@ -119,9 +126,9 @@ def procesar():
 def ejecutar_script(archivo_path):
     # Aquí puedes ejecutar el script de Python que quieras
     # En este caso, simplemente leemos el archivo y devolvemos su contenido
-    #with open(archivo_path, 'r') as archivo:
-     #   return archivo.read()
-    return "recibido"
+    with open(archivo_path, 'r') as archivo:
+        return archivo.read()
+    #return "recibido"
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)

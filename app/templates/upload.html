@@ -1,9 +1,0 @@
-{% extends './base.html' %}
-
-{% block contenido %}
-    <h2>Subir Archivo</h2>
-    <form action="/procesar" method="post" enctype="multipart/form-data">
-        <input type="file" name="archivo" >
-        <input type="submit" value="Subir">
-    </form>
-{% endblock %}
