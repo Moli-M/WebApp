@@ -75,7 +75,7 @@ def login():
             #return 'Login fallido. Por favor, verifica tus credenciales.'
             flash('Login fallido. Por favor, verifica tus credenciales.', 'error')
     data={
-        'titulo': 'Login',
+        'titulo': 'Inicio de sesión',
     }
     return render_template('login.html', data=data)
 

@@ -10,10 +10,12 @@
 </head>
 <body>
     <div class="header">
-        <nav>
-            <a href="{{ url_for('index') }}">Home</a>
-            <a href="{{ url_for('history') }}">Historial</a>
-        </nav>
+        <div class="nav-div">
+            <nav>
+                <a href="{{ url_for('index') }}">Inicio</a>
+                <a href="{{ url_for('history') }}">Historial</a>
+            </nav>
+        </div>
         <div class="buttons">
             {% if current_user.is_authenticated %}
                 <form action="{{ url_for('logout') }}" method="POST">
@@ -29,10 +31,10 @@
                     <input type="submit" value="Registrarse">
                 </form>
             </div>
-
             {% endif %}
+        
+            <button class="fa-solid fa-user icon fa-3x profile-button" >
         </div>
-        <button class="fa-solid fa-user icon fa-3x" onmouseover="showMenu()" onmouseout="hideMenu()"></i>
 
     </div>
 
