@@ -21,8 +21,7 @@ for col in X.select_dtypes(include=['object']):
 scaler = StandardScaler()
 X[X.select_dtypes(include=['float64']).columns] = scaler.fit_transform(X.select_dtypes(include=['float64']))
 
-import sys
-sys.stdout.reconfigure(encoding='utf-8')
 results = modelo.predict(X)
 
-return results
+
+

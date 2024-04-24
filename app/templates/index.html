@@ -17,11 +17,11 @@
 <div class="result-div">
     <h2>Resultado</h2>
     <div class="result">
-        {% if data.res.all() %}
-            {% for item in data.res %}
-                {{item}}
-            {% endfor %}
-        {% endif %}
+        <p>
+            {% if data.res.all() %}
+                {{ data.res }}
+            {% endif %}
+        </p>
     </div>
 
 </div>
