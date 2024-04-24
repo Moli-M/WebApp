@@ -3,6 +3,15 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.user import User, db
+import subprocess;
+import tensorflow as tf
+import pandas as pd
+import sys
+
+from tensorflow import keras
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
 
 
 app = Flask(__name__)
@@ -101,18 +110,10 @@ def procesar():
             return redirect(url_for('index'))
 
         archivo = request.files['archivo'] 
-
-        if archivo.filename == '':
-            return redirect(request.url) 
         if archivo and (archivo.filename.endswith('.txt') or archivo.filename.endswith('.csv')):
-            # Guardar el archivo temporalmente
             archivo_path = os.path.join('csv', archivo.filename)
             archivo.save(".\\csv\\"+archivo.filename)
-
-            # Ejecutar el script de Python con el archivo como argumento
             resultado_script = ejecutar_script(archivo_path)
-
-            # Puedes hacer algo con el resultado del script, como mostrarlo en la página
             data = {
                 'titulo': 'Resultado del script',	
                 'res': resultado_script
@@ -120,15 +121,23 @@ def procesar():
             return render_template("index.html", data = data)
 
         return 'Formato de archivo no permitido. Por favor, sube un archivo .txt.'
-    else:
-        return f"s"
 
 def ejecutar_script(archivo_path):
-    # Aquí puedes ejecutar el script de Python que quieras
-    # En este caso, simplemente leemos el archivo y devolvemos su contenido
-    with open(archivo_path, 'r') as archivo:
-        return archivo.read()
-    #return "recibido"
+    data=pd.read_csv(archivo_path)
+
+    modelo = keras.models.load_model('./static/python/modelo_entrenado3.keras')
+
+    X = data.drop('class', axis=1)
+
+    le = LabelEncoder()
+    for col in X.select_dtypes(include=['object']):
+        X[col] = le.fit_transform(X[col])
+
+    scaler = StandardScaler()
+    X[X.select_dtypes(include=['float64']).columns] = scaler.fit_transform(X.select_dtypes(include=['float64']))
+
+    results = modelo.predict(X)
+    return results
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)

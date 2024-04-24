@@ -20,15 +20,30 @@ nav{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+}
+
+.nav-div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    vertical-align: middle;
+    margin-left: 10px;
 }
 
 nav a{
     display: flex;
     font-size: 18px;
-    color: white;
     text-decoration: none;
-    margin-left: 10px;
+    margin-left: 15px;
+    background-color: white;
+    height: 50px;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 50px; /* Alinea verticalmente */
+    padding-left: 10px;
+    padding-right: 10px;
+    color: black;
+    border-radius: 5px;
 }
 
 .buttons {
@@ -70,3 +85,15 @@ nav a{
     cursor: pointer;
 }
 
+.upload-div{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.result-div{
+    margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}

@@ -2,17 +2,28 @@
 
 {% block contenido %}
 
-<h2>Subir Archivo</h2>
-<form action="/procesar" method="post" enctype="multipart/form-data">
-    <input type=file name=archivo>
-    <input type=submit value=Subir>
-</form>
 
-<h2>Resultado</h2>
-<p>
-    {% if data.res %}
-        {{ data.res }}
-    {% endif %}
-</p>
+<div class="upload-div">
+    <div class="upload-container">
+        <h2>Subir Archivo</h2>
+        <form action="/procesar" method="post" enctype="multipart/form-data">
+            <input type=file name=archivo>
+            <input type=submit value=Subir>
+        </form>
+    </div>
+</div>
+
+
+<div class="result-div">
+    <h2>Resultado</h2>
+    <div class="result">
+        {% if data.res.all() %}
+            {% for item in data.res %}
+                {{item}}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
 
 {% endblock %}
