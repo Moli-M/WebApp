@@ -15,11 +15,22 @@
 
 
 <div class="result-div">
-    <h2>Resultado</h2>
+
     <div class="result">
+        <h2>Resultado</h2>
         <p>
-            {% if data.res.all() %}
-                {{ data.res }}
+            {% if data.cont == 1 %}
+
+                <div class="data_results">
+                    <img src="{{ url_for('static', filename='img/grafico.png') }}" alt="Gráfico de Barras">
+                    <div class="probabilities">
+                        {% if data.probabilidades.all() %}
+                            {% for prob in data.probabilidades %}
+                                {{ prob + "\n"}}<br>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
             {% endif %}
         </p>
     </div>
