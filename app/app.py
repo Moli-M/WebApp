@@ -13,6 +13,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 
+import matplotlib.pyplot as plt
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -37,7 +39,8 @@ def index():
     
     data={
         'titulo': 'Index',
-        'encabezado': 'Prueba'
+        'encabezado': 'Prueba',
+        'cont': 0
     }
     return render_template('index.html', data=data)
 
@@ -114,30 +117,61 @@ def procesar():
             archivo_path = os.path.join('csv', archivo.filename)
             archivo.save(".\\csv\\"+archivo.filename)
             resultado_script = ejecutar_script(archivo_path)
+            gen_grafico(resultado_script)
             data = {
                 'titulo': 'Resultado del script',	
-                'res': resultado_script
+                'cont': 1,
+                'archivo': 'img/grafico.png',
+                'probabilidades': resultado_script
             }
             return render_template("index.html", data = data)
 
         return 'Formato de archivo no permitido. Por favor, sube un archivo .txt.'
 
+@app.route('/prueba', methods=['POST', 'GET'])
+@login_required
+def prueba():
+    data = {
+        'titulo': 'Resultado del script',	
+        'cont': 1,
+        'archivo': 'img/grafico.png'
+    }
+    return render_template("index.html", data = data)
+
+def gen_grafico(datos):
+    num_clases = len(datos[0])  # Número de clases
+    clases = [f'Clase {i+1}' for i in range(num_clases)]
+    probabilidades = [sum(sublista) / len(sublista) for sublista in zip(*datos)]
+
+    # Generar el gráfico de barras
+    plt.bar(clases, probabilidades)
+    plt.xlabel('Clases')
+    plt.ylabel('Probabilidades promedio')
+    plt.title('Resultado')
+
+    # Guardar el gráfico en un archivo
+    nombre_archivo = 'static/img/grafico.png'
+    plt.savefig(nombre_archivo)
+    return probabilidades
+
 def ejecutar_script(archivo_path):
-    data=pd.read_csv(archivo_path)
+    try:
+        data=pd.read_csv(archivo_path)
 
-    modelo = keras.models.load_model('./static/python/modelo_entrenado3.keras')
+        modelo = keras.models.load_model('./static/python/modelo_entrenado3.keras')
 
-    X = data.drop('class', axis=1)
+        X = data.drop('class', axis=1)
 
-    le = LabelEncoder()
-    for col in X.select_dtypes(include=['object']):
-        X[col] = le.fit_transform(X[col])
+        le = LabelEncoder()
+        for col in X.select_dtypes(include=['object']):
+            X[col] = le.fit_transform(X[col])
 
-    scaler = StandardScaler()
-    X[X.select_dtypes(include=['float64']).columns] = scaler.fit_transform(X.select_dtypes(include=['float64']))
+        scaler = StandardScaler()
+        X[X.select_dtypes(include=['float64']).columns] = scaler.fit_transform(X.select_dtypes(include=['float64']))
 
-    results = modelo.predict(X)
-    return results
-
+        results = modelo.predict(X)
+        return results
+    except Exception as e:
+        return str(e)
 if __name__ == '__main__':
     app.run(debug=True, port=5005)
