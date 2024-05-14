@@ -36,7 +36,7 @@ with app.app_context():
 @app.route('/')
 def index():
     #return "prueba"
-    
+    borrar_graficos()
     data={
         'titulo': 'Index',
         'encabezado': 'Prueba',
@@ -46,6 +46,7 @@ def index():
 
 @app.route('/history')
 def history():
+    borrar_graficos()
     data={
         'titulo': 'Historial'
     }
@@ -94,12 +95,14 @@ def login():
 @app.route('/logout', methods=['POST'])
 @login_required
 def logout():
+    borrar_graficos()
     logout_user()
     return redirect(url_for('login'))
 
 @app.route('/upload')
 @login_required
 def upload():
+    borrar_graficos()
     data={
         'titulo': 'Upload'
     }
@@ -117,16 +120,20 @@ def procesar():
             archivo_path = os.path.join('csv', archivo.filename)
             archivo.save(".\\csv\\"+archivo.filename)
             resultado_script = ejecutar_script(archivo_path)
-            gen_grafico(resultado_script)
+            probabilidades = gen_grafico(resultado_script)
+            print(probabilidades)
+            print(type(probabilidades))
+            #probabilidades_lista = [str(item) for sublist in resultado_script for item in sublist]
+
             data = {
                 'titulo': 'Resultado del script',	
                 'cont': 1,
                 'archivo': 'img/grafico.png',
-                'probabilidades': resultado_script
+                'probabilidades': probabilidades
             }
             return render_template("index.html", data = data)
 
-        return 'Formato de archivo no permitido. Por favor, sube un archivo .txt.'
+        return 'Formato de archivo no permitido. Por favor, sube un archivo .txt o .csv.'
 
 @app.route('/prueba', methods=['POST', 'GET'])
 @login_required
@@ -157,7 +164,7 @@ def gen_grafico(datos):
 def ejecutar_script(archivo_path):
     try:
         data=pd.read_csv(archivo_path)
-
+        os.remove(archivo_path)
         modelo = keras.models.load_model('./static/python/modelo_entrenado3.keras')
 
         X = data.drop('class', axis=1)
@@ -173,5 +180,12 @@ def ejecutar_script(archivo_path):
         return results
     except Exception as e:
         return str(e)
+
+def borrar_graficos():
+    archivos = os.listdir('static/img')
+    for archivo in archivos:
+        if archivo.endswith('.png'):
+            os.remove(f'static/img/{archivo}')
+
 if __name__ == '__main__':
     app.run(debug=True, port=5005)

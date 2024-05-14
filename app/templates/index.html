@@ -24,9 +24,9 @@
                 <div class="data_results">
                     <img src="{{ url_for('static', filename='img/grafico.png') }}" alt="Gráfico de Barras">
                     <div class="probabilities">
-                        {% if data.probabilidades.all() %}
+                        {% if data.probabilidades %}
                             {% for prob in data.probabilidades %}
-                                {{ prob + "\n"}}<br>
+                                Clase {{ loop.index }}: {{ prob }}<br>
                             {% endfor %}
                         {% endif %}
                     </div>
