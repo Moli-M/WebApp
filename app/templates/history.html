@@ -1,5 +1,32 @@
 {% extends './base.html' %}
 
 {% block contenido %}
+<div class="page-content">
+    <h1>Historial</h1>
+    <div class="table-div">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Resultado</th>
+                    <th>Fecha</th>
+                    <th>Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for historial in data.historiales %}
+                        <tr>
+                            <td>{{ historial.id }}</td>
+                            <td>{{ historial.result }}</td>
+                            <td>{{ historial.date }}</td>
+                            <td>
+                                <a href="{{ url_for('history_details', history_id=historial.id) }}" class="btn btn-info">Detalles</a>
+                            </td>
+                        </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
 {% endblock %}

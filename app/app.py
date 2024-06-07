@@ -3,11 +3,12 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.user import User, db
+from models.history import History
 import subprocess;
 import tensorflow as tf
 import pandas as pd
 import sys
-
+import json
 from tensorflow import keras
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
@@ -47,7 +48,10 @@ def index():
 @app.route('/history')
 def history():
     borrar_graficos()
+    historiales = History.query.filter_by(uid=current_user.id).all()
+    print(historiales)
     data={
+        'historiales': historiales,
         'titulo': 'Historial'
     }
     return render_template('history.html', data=data)
@@ -120,11 +124,12 @@ def procesar():
             archivo_path = os.path.join('csv', archivo.filename)
             archivo.save(".\\csv\\"+archivo.filename)
             resultado_script = ejecutar_script(archivo_path)
+            print(resultado_script)
             probabilidades = gen_grafico(resultado_script)
-            print(probabilidades)
-            print(type(probabilidades))
             #probabilidades_lista = [str(item) for sublist in resultado_script for item in sublist]
-
+            res = History(result=str(probabilidades), uid=current_user.id)
+            db.session.add(res)
+            db.session.commit()
             data = {
                 'titulo': 'Resultado del script',	
                 'cont': 1,
@@ -145,6 +150,24 @@ def prueba():
     }
     return render_template("index.html", data = data)
 
+@app.route('/history/<int:history_id>')
+@login_required
+def history_details(history_id):
+    historial = History.query.get_or_404(history_id)
+    
+    resultado_script = json.loads(historial.result)
+    probabilidades = gen_grafico2(resultado_script)
+
+    data = {
+        'titulo': 'Detalles del Historial',
+        'historial': historial,
+        'archivo': 'static/img/grafico.png',
+        'probabilidades': probabilidades,
+    }
+
+    return render_template('history_details.html', data=data)
+
+
 def gen_grafico(datos):
     num_clases = len(datos[0])  # Número de clases
     clases = [f'Clase {i+1}' for i in range(num_clases)]
@@ -160,6 +183,23 @@ def gen_grafico(datos):
     nombre_archivo = 'static/img/grafico.png'
     plt.savefig(nombre_archivo)
     return probabilidades
+
+def gen_grafico2(datos):
+    num_clases = len(datos)
+    clases = [f'Clase {i+1}' for i in range(num_clases)]
+    probabilidades = datos
+
+    # Generar el gráfico de barras
+    plt.bar(clases, probabilidades)
+    plt.xlabel('Clases')
+    plt.ylabel('Probabilidades promedio')
+    plt.title('Resultado')
+
+    # Guardar el gráfico en un archivo
+    nombre_archivo = 'static/img/grafico.png'
+    plt.savefig(nombre_archivo)
+    return probabilidades
+
 
 def ejecutar_script(archivo_path):
     try:

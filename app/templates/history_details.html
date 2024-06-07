@@ -1,0 +1,21 @@
+{% extends './base.html' %}
+
+{% block contenido %}
+<div class="result-div">
+
+    <div class="result">
+        <h2>Resultado</h2>
+        <p>
+            <div class="data_results">
+                <img src="{{ url_for('static', filename='img/grafico.png') }}" alt="Gráfico de Barras">
+                <div class="probabilities">
+                    {% for prob in data.probabilidades %}
+                        Clase {{ loop.index }}: {{ prob }}<br>
+                    {% endfor %}
+                </div>
+            </div>
+        </p>
+    </div>
+
+</div>
+{% endblock %}

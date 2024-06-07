@@ -1,0 +1,44 @@
+.table-div {
+    margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    background-color: lightblue;
+    margin-left: 50px;
+    margin-right: 50px;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    width: 100%;
+}
+
+thead {
+    background-color: lightblue;
+}
+
+thead tr{
+    width: 100%;
+}
+
+tbody tr {
+    background-color: white;
+    margin-bottom: 10px;
+}
+
+tr{
+    border-radius: 10px;
+}
+
+td, th {
+    padding: 10px;
+    text-align: left;
+}
+
+tr {
+    background-color: white;
+    border-bottom: 10px solid lightblue;
+}
