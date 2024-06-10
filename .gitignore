@@ -1,2 +1,4 @@
 csv/
-statuc/img
+static/img
+instance/
+__pycache__/

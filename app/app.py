@@ -9,11 +9,12 @@ import tensorflow as tf
 import pandas as pd
 import sys
 import json
+import re
 from tensorflow import keras
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
-
+from flask_migrate import Migrate
 import matplotlib.pyplot as plt
 
 
@@ -23,6 +24,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'test'
 
 db.init_app(app)
+
+migrate = Migrate(app,db)
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -62,9 +66,16 @@ def register():
         username = request.form['username']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
+        name = request.form['name']
+        email = request.form['email']
 
         if(password != confirm_password):
             flash('Las contraseñas no coinciden.', 'error')
+            return redirect(url_for('register'))
+
+        email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(email_regex, email):
+            flash('El formato del correo electrónico no es válido.', 'error')
             return redirect(url_for('register'))
         
         existing_user = User.query.filter_by(username=username).first()
@@ -72,8 +83,13 @@ def register():
             flash('El usuario ya existe.', 'error')
             return redirect(url_for('register'))
 
+        existing_email = User.query.filter_by(email=email).first()
+        if existing_email:
+            flash('El correo electrónico ya está en uso.', 'error')
+            return redirect(url_for('register'))
+
         hashed_password = generate_password_hash(password)
-        new_user = User(username=username, password=hashed_password)
+        new_user = User(username=username, password=hashed_password, name=name, email=email)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
@@ -102,6 +118,30 @@ def logout():
     borrar_graficos()
     logout_user()
     return redirect(url_for('login'))
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            flash('No se encontró ningún usuario con ese email.', 'error')
+            return redirect(url_for('forgot_password'))
+
+        new_password = request.form['new_password']
+        confirm_new_password = request.form['confirm_new_password']
+
+        if(new_password != confirm_new_password):
+            flash('Las contraseñas no coinciden.', 'error')
+            return redirect(url_for('forgot_password'))
+
+        user.password = generate_password_hash(new_password)
+        db.session.commit()
+
+        return redirect(url_for('login'))
+    
+    return render_template('forgot_password.html')
 
 @app.route('/upload')
 @login_required
