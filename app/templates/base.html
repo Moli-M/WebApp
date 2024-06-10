@@ -35,8 +35,11 @@
                 </form>
             </div>
             {% endif %}
-        
-            <button class="fa-solid fa-user icon fa-3x profile-button" >
+            
+            <form action = "{{ url_for('profile') }}" method="GET">
+                <button class="fa-solid fa-user icon fa-3x profile-button" onclick="{{ url_for('profile') }}" >
+            </form>
+            <!-- <button class="fa-solid fa-user icon fa-3x profile-button" onclick="{{ url_for('profile') }}" > -->
         </div>
 
     </div>
@@ -46,6 +49,6 @@
         {% block contenido %}
         {% endblock %}
     </div>
-    <!--<script src="{{ url_for('static', filename='js/index.js')}}"></script>-->
+
 </body>
 </html>
