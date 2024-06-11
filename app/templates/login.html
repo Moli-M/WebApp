@@ -9,7 +9,7 @@
 <body>
     <div class="login-div">
         <h2>Iniciar sesión</h2>
-        <form action="{{ url_for('login') }}" method="POST" class="login-form">
+        <form action="{{ url_for('userController.login') }}" method="POST" class="login-form">
             <div class="form-field">
                 <label for="username">Nombre de usuario:</label><br>
                 <input type="text" id="username" name="username" required><br>
@@ -33,10 +33,10 @@
         </form>
         <div class="buttons">
             <div class="register-button">
-                <a href="{{ url_for('register') }}" class="button">Registrarse</a>
+                <a href="{{ url_for('userController.register') }}" class="button">Registrarse</a>
             </div>
             <div class="register-button">
-                <a href="{{ url_for('forgot_password') }}" class="button">He olvidado la contraseña</a>
+                <a href="{{ url_for('userController.forgot_password') }}" class="button">He olvidado la contraseña</a>
             </div>
         </div>
 

@@ -3,7 +3,7 @@
 {% block contenido %}
     <div class="profile-div">
         <h2>Perfil</h2>
-        <form action="{{ url_for('update_profile') }}" method="POST" class="profile-form">
+        <form action="{{ url_for('userController.update_profile') }}" method="POST" class="profile-form">
             <label>Nombre de Usuario: {{ current_user.username }}</label>
             <label>Correo Electrónico:{{ current_user.email }}</label>
             <div class="form-field">

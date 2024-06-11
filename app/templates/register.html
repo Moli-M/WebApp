@@ -9,7 +9,7 @@
 <body>
     <div class="register-div">
         <h2>Registro</h2>
-        <form action="{{ url_for('register') }}" method="POST">
+        <form action="{{ url_for('userController.register') }}" method="POST">
             <div class="form-field"> 
                 <label for="username">Nombre de Usuario:</label><br>
                 <input type="text" id="username" name="username" required><br>
@@ -44,7 +44,7 @@
                 {% endwith %}
             <input type="submit" value="Registrarse" class="button">
         </form>
-        <p>¿Ya tienes una cuenta? <a href="{{ url_for('login') }}">Iniciar sesión</a></p>
+        <p>¿Ya tienes una cuenta? <a href="{{ url_for('userController.login') }}">Iniciar sesión</a></p>
     </div>
     
 

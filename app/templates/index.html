@@ -6,7 +6,7 @@
 <div class="upload-div">
     <div class="upload-container">
         <h2>Subir Archivo</h2>
-        <form action="/procesar" method="post" enctype="multipart/form-data">
+        <form action="{{ url_for('dataController.procesar') }}" method="post" enctype="multipart/form-data">
             <input type=file name=archivo>
             <input type=submit value=Subir>
         </form>

@@ -16,30 +16,29 @@
         <div class="nav-div">
             <nav>
                 <a href="{{ url_for('index') }}">Inicio</a>
-                <a href="{{ url_for('history') }}">Historial</a>
+                <a href="{{ url_for('userController.history') }}">Historial</a>
             </nav>
         </div>
         <div class="buttons">
             {% if current_user.is_authenticated %}
-                <form action="{{ url_for('logout') }}" method="POST">
+                <form action="{{ url_for('userController.logout') }}" method="POST">
                     <input type="submit" value="Cerrar sesión">
                 </form>
             {% endif %}
             {% if not current_user.is_authenticated %}
             <div class="auth-buttons">
-                <form action="{{ url_for('login') }}" method="GET">
+                <form action="{{ url_for('userController.login') }}" method="GET">
                     <input type="submit" value="Iniciar sesión">
                 </form>
-                <form action="{{ url_for('register') }}" method="GET">
+                <form action="{{ url_for('userController.register') }}" method="GET">
                     <input type="submit" value="Registrarse">
                 </form>
             </div>
             {% endif %}
             
-            <form action = "{{ url_for('profile') }}" method="GET">
-                <button class="fa-solid fa-user icon fa-3x profile-button" onclick="{{ url_for('profile') }}" >
+            <form action = "{{ url_for('userController.profile') }}" method="GET">
+                <button class="fa-solid fa-user icon fa-3x profile-button" onclick="{{ url_for('userController.profile') }}" >
             </form>
-            <!-- <button class="fa-solid fa-user icon fa-3x profile-button" onclick="{{ url_for('profile') }}" > -->
         </div>
 
     </div>

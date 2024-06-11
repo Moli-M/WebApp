@@ -20,6 +20,7 @@ from utils import gen_grafico, gen_grafico2, ejecutar_script, borrar_graficos
 
 userController = Blueprint('userController', __name__, template_folder='templates')
 
+@login_required
 @userController.route('/history')
 def history():
     borrar_graficos()
@@ -42,28 +43,28 @@ def register():
 
         if(password != confirm_password):
             flash('Las contraseñas no coinciden.', 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('userController.register'))
 
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_regex, email):
             flash('El formato del correo electrónico no es válido.', 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('userController.register'))
         
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             flash('El usuario ya existe.', 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('userController.register'))
 
         existing_email = User.query.filter_by(email=email).first()
         if existing_email:
             flash('El correo electrónico ya está en uso.', 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('userController.register'))
 
         hashed_password = generate_password_hash(password)
         new_user = User(username=username, password=hashed_password, name=name, email=email)
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('login'))
+        return redirect(url_for('userController.login'))
     return render_template('register.html')
 
 @userController.route('/login', methods=['GET', 'POST'])
@@ -110,7 +111,7 @@ def forgot_password():
         user.password = generate_password_hash(new_password)
         db.session.commit()
 
-        return redirect(url_for('login'))
+        return redirect(url_for('userController.login'))
     
     return render_template('forgot_password.html')
 
@@ -134,7 +135,7 @@ def update_profile():
         if(password and confirm_password):
             if(password != confirm_password):
                 flash('Las contraseñas no coinciden.', 'error')
-                return redirect(url_for('update_profile'))
+                return redirect(url_for('userController.update_profile'))
             current_user.password = generate_password_hash(password)
 
         db.session.commit()

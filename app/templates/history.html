@@ -20,7 +20,7 @@
                             <td>{{ historial.result }}</td>
                             <td>{{ historial.date }}</td>
                             <td>
-                                <a href="{{ url_for('history_details', history_id=historial.id) }}" class="btn btn-info">Detalles</a>
+                                <a href="{{ url_for('dataController.history_details', history_id=historial.id) }}" class="btn btn-info">Detalles</a>
                             </td>
                         </tr>
                 {% endfor %}

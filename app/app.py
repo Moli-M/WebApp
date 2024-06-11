@@ -33,8 +33,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-app.register_blueprint(userController)
-app.register_blueprint(dataController)
+app.register_blueprint(userController, url_prefix='/user')
+app.register_blueprint(dataController, url_prefix='/data')
 
 @login_manager.user_loader
 def load_user(user_id):
