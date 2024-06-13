@@ -20,17 +20,7 @@ from utils import gen_grafico, gen_grafico2, ejecutar_script, borrar_graficos
 
 userController = Blueprint('userController', __name__, template_folder='templates')
 
-@login_required
-@userController.route('/history')
-def history():
-    borrar_graficos()
-    historiales = History.query.filter_by(uid=current_user.id).all()
-    print(historiales)
-    data={
-        'historiales': historiales,
-        'titulo': 'Historial'
-    }
-    return render_template('history.html', data=data)
+
 
 @userController.route('/register', methods=['GET', 'POST'])
 def register():

@@ -73,3 +73,15 @@ def history_details(history_id):
     }
 
     return render_template('history_details.html', data=data)
+
+@login_required
+@userController.route('/history')
+def history():
+    borrar_graficos()
+    historiales = History.query.filter_by(uid=current_user.id).all()
+    print(historiales)
+    data={
+        'historiales': historiales,
+        'titulo': 'Historial'
+    }
+    return render_template('history.html', data=data)
