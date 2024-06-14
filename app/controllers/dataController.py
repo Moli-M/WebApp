@@ -75,7 +75,7 @@ def history_details(history_id):
     return render_template('history_details.html', data=data)
 
 @login_required
-@userController.route('/history')
+@dataController.route('/history')
 def history():
     borrar_graficos()
     historiales = History.query.filter_by(uid=current_user.id).all()

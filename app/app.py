@@ -31,7 +31,7 @@ migrate = Migrate(app,db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'userController.login'
 
 app.register_blueprint(userController, url_prefix='/user')
 app.register_blueprint(dataController, url_prefix='/data')

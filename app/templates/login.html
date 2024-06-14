@@ -32,12 +32,9 @@
             <input type="submit" value="Iniciar sesión" class="button">
         </form>
         <div class="buttons">
-            <div class="register-button">
                 <a href="{{ url_for('userController.register') }}" class="button">Registrarse</a>
-            </div>
-            <div class="register-button">
-                <a href="{{ url_for('userController.forgot_password') }}" class="button">He olvidado la contraseña</a>
-            </div>
+
+                <a href="{{ url_for('userController.forgot_password') }}" class="button fp-button">He olvidado la contraseña</a>
         </div>
 
     </div>

@@ -79,7 +79,7 @@ def login():
 def logout():
     borrar_graficos()
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('userController.login'))
 
 @userController.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
@@ -89,14 +89,14 @@ def forgot_password():
         
         if not user:
             flash('No se encontró ningún usuario con ese email.', 'error')
-            return redirect(url_for('forgot_password'))
+            return redirect(url_for('userController.forgot_password'))
 
         new_password = request.form['new_password']
         confirm_new_password = request.form['confirm_new_password']
 
         if(new_password != confirm_new_password):
             flash('Las contraseñas no coinciden.', 'error')
-            return redirect(url_for('forgot_password'))
+            return redirect(url_for('userController.forgot_password'))
 
         user.password = generate_password_hash(new_password)
         db.session.commit()
@@ -129,4 +129,4 @@ def update_profile():
             current_user.password = generate_password_hash(password)
 
         db.session.commit()
-        return redirect(url_for('profile'))
+        return redirect(url_for('userController.profile'))
