@@ -3,9 +3,9 @@
 {% block contenido %}
     <div class="profile-div">
         <h2>Perfil</h2>
+        <label>Nombre de Usuario: {{ current_user.username }}</label><br>
+        <label>Correo Electrónico:{{ current_user.email }}</label>
         <form action="{{ url_for('userController.update_profile') }}" method="POST" class="profile-form">
-            <label>Nombre de Usuario: {{ current_user.username }}</label>
-            <label>Correo Electrónico:{{ current_user.email }}</label>
             <div class="form-field">
                 <label>Nombre:</label>
                 <input type="text" id="name" name="name" value={{ current_user.name }}>
@@ -19,6 +19,12 @@
                 <input type="password" id="confirm_password" name="confirm_password">
             </div>
             <input type="submit" value="Actualizar" class="button">
+
+        </form>
+        <form action="{{ url_for('userController.delete_user') }}" method="POST">
+            <input type="hidden" name="user_id" value="{{ current_user.id }}">
+            <button type="submit" class="button del-button">Eliminar Usuario</button>
+        </form>
     </div>
 
     
