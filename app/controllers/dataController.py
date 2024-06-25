@@ -23,6 +23,18 @@ dataController = Blueprint('dataController', __name__, template_folder='template
 @dataController.route('/upload')
 @login_required
 def upload():
+    """
+    Carga de datos
+    ---
+    get:
+    description: Muestra la página de carga de datos
+    responses:
+        200:
+        description: Página de carga mostrada con éxito
+        401:
+        description: Usuario no autenticado
+    """
+
     borrar_graficos()
     data={
         'titulo': 'Upload'
@@ -32,6 +44,36 @@ def upload():
 @dataController.route('/procesar', methods=['POST', 'GET'])
 @login_required
 def procesar():
+    """
+    Procesamiento de archivo de datos
+    ---
+    get:
+    description: Muestra la página para procesar un archivo de datos
+    responses:
+        200:
+        description: Página de procesamiento mostrada con éxito
+        401:
+        description: Usuario no autenticado
+
+    post:
+    description: Procesa un archivo de datos subido por el usuario
+    parameters:
+        - name: archivo
+        in: formData
+        type: file
+        required: true
+        description: Archivo a procesar (formato .txt o .csv)
+    responses:
+        200:
+        description: Archivo procesado con éxito
+        400:
+        description: Error en los datos de entrada
+        401:
+        description: Usuario no autenticado
+        415:
+        description: Formato de archivo no permitido, sube un archivo .txt o .csv
+    """
+
     if request.method == 'POST':
         if 'archivo' not in request.files:
             return redirect(url_for('index'))
@@ -60,6 +102,26 @@ def procesar():
 @dataController.route('/history/<int:history_id>')
 @login_required
 def history_details(history_id):
+    """
+    Detalles del historial
+    ---
+    get:
+    description: Muestra los detalles de un historial específico
+    parameters:
+        - name: history_id
+        in: path
+        type: integer
+        required: true
+        description: ID del historial
+    responses:
+        200:
+        description: Detalles del historial mostrados con éxito
+        401:
+        description: Usuario no autenticado
+        404:
+        description: Historial no encontrado
+    """
+
     historial = History.query.get_or_404(history_id)
     
     resultado_script = json.loads(historial.result)
@@ -78,6 +140,18 @@ def history_details(history_id):
 @dataController.route('/history')
 @login_required
 def history():
+    """
+    Historial de resultados
+    ---
+    get:
+    description: Muestra el historial de resultados del usuario autenticado
+    responses:
+        200:
+        description: Historial mostrado con éxito
+        401:
+        description: Usuario no autenticado
+    """
+
     borrar_graficos()
     historiales = History.query.filter_by(uid=current_user.id).all()
     print(historiales)
