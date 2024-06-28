@@ -25,50 +25,53 @@ userController = Blueprint('userController', __name__, template_folder='template
 @userController.route('/register', methods=['GET', 'POST'])
 def register():
     """
-    Registro de un nuevo usuario
+    Registro de un nuevo usuario.
     ---
+    tags:
+      - User
     get:
-      description: Muestra la página de registro de usuario
+      description: Muestra la página de registro de usuario.
       responses:
         200:
-          description: Página de registro mostrada con éxito
+          description: Página de registro mostrada correctamente.
 
     post:
-      description: Registra un nuevo usuario
+      description: Registra un nuevo usuario.
       parameters:
-        - name: username
-          in: formData
-          type: string
-          required: true
-          description: Nombre de usuario
-        - name: password
-          in: formData
-          type: string
-          required: true
-          description: Contraseña del usuario
-        - name: confirm_password
-          in: formData
-          type: string
-          required: true
-          description: Confirmación de la contraseña del usuario
-        - name: name
-          in: formData
-          type: string
-          required: true
-          description: Nombre completo del usuario
-        - name: email
-          in: formData
-          type: string
-          required: true
-          description: Correo electrónico del usuario
-      responses:
+      - name: username
+        in: formData
+        type: string
+        required: true
+        description: Nombre de usuario.
+      - name: password
+        in: formData
+        type: string
+        required: true
+        description: Contraseña del usuario.
+      - name: confirm_password
+        in: formData
+        type: string
+        required: true
+        description: Confirmación de la contraseña del usuario.
+      - name: name
+        in: formData
+        type: string
+        required: true
+        description: Nombre completo del usuario.
+      - name: email
+        in: formData
+        type: string
+        required: true
+        description: Correo electrónico del usuario.
+    responses:
         200:
-          description: Usuario registrado con éxito
+          description: Usuario registrado con éxito.
         400:
-          description: Error en los datos de entrada
+          description: Error en los datos de entrada.
         409:
-          description: Conflicto, el usuario o el correo electrónico ya existen
+          description: Conflicto, el usuario o el correo electrónico ya existen.
     """
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -105,36 +108,35 @@ def register():
 @userController.route('/login', methods=['GET', 'POST'])
 def login():
     """
-    Inicio de sesión de usuario
+    Inicia sesión en el sistema.
     ---
+    tags:
+       - User
     get:
-    description: Muestra la página de inicio de sesión
-    responses:
+      description: Muestra la página de inicio de sesión.
+      responses:
         200:
-        description: Página de inicio de sesión mostrada con éxito
+        description: Página de inicio de sesión mostrada correctamente.
 
     post:
-    description: Autentica a un usuario
-    parameters:
-        - name: username
+      description: Inicia sesión con las credenciales proporcionadas.
+      parameters:
+      - name: username
         in: formData
         type: string
         required: true
-        description: Nombre de usuario
-        - name: password
+        description: Nombre de usuario.
+      - name: password
         in: formData
         type: string
         required: true
-        description: Contraseña del usuario
+        description: Contraseña del usuario.
     responses:
         200:
-        description: Usuario autenticado con éxito
+          description: Inicio de sesión exitoso.
         400:
-        description: Error en los datos de entrada
-        401:
-        description: Credenciales incorrectas
+          description: Credenciales incorrectas o error en los datos de entrada.
     """
-
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -154,16 +156,19 @@ def login():
 @login_required
 def logout():
     """
-    Cierre de sesión de usuario
+    Cierra la sesión del usuario actual.
     ---
+    tags:
+      - User
     post:
-    description: Cierra la sesión del usuario autenticado
-    responses:
+      description: Cierra la sesión del usuario actual.
+      responses:
         200:
-        description: Usuario desconectado con éxito
+          description: Sesión cerrada con éxito.
         401:
-        description: Usuario no autenticado
+          description: No autorizado, el usuario no ha iniciado sesión.
     """
+
 
     borrar_graficos()
     logout_user()
@@ -172,41 +177,41 @@ def logout():
 @userController.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     """
-    Restablecimiento de contraseña
+    Recuperación de contraseña.
     ---
+    tags:
+      - User
     get:
-    description: Muestra la página para restablecer la contraseña
-    responses:
+      description: Muestra la página de recuperación de contraseña.
+      responses:
         200:
-        description: Página de restablecimiento de contraseña mostrada con éxito
+        description: Página de recuperación de contraseña mostrada correctamente.
 
     post:
-    description: Permite a un usuario restablecer su contraseña
-    parameters:
-        - name: email
+      description: Permite al usuario recuperar su contraseña.
+      parameters:
+      - name: email
         in: formData
         type: string
         required: true
-        description: Correo electrónico del usuario
-        - name: new_password
+        description: Correo electrónico del usuario.
+      - name: new_password
         in: formData
         type: string
         required: true
-        description: Nueva contraseña del usuario
-        - name: confirm_new_password
+        description: Nueva contraseña del usuario.
+      - name: confirm_new_password
         in: formData
         type: string
         required: true
-        description: Confirmación de la nueva contraseña del usuario
+        description: Confirmación de la nueva contraseña del usuario.
     responses:
         200:
-        description: Contraseña restablecida con éxito
+          description: Contraseña recuperada con éxito.
         400:
-        description: Error en los datos de entrada
+          description: Error en los datos de entrada.
         404:
-        description: Usuario no encontrado
-        409:
-        description: Las contraseñas no coinciden
+          description: No se encontró ningún usuario con ese email.
     """
 
     if request.method == 'POST':
@@ -235,25 +240,26 @@ def forgot_password():
 @login_required
 def profile():
     """
-    Perfil del usuario
+    Perfil del usuario.
     ---
+    tags:
+      - User
     get:
-    description: Muestra la página de perfil del usuario autenticado
-    responses:
+      description: Muestra la página del perfil del usuario.
+      responses:
         200:
-        description: Página de perfil mostrada con éxito
+          description: Página del perfil mostrada correctamente.
         401:
-        description: Usuario no autenticado
-
+          description: No autorizado, el usuario no ha iniciado sesión.
     post:
-    description: Actualiza el perfil del usuario autenticado
-    responses:
+      description: Actualiza la información del perfil del usuario.
+      responses:
         200:
-        description: Perfil actualizado con éxito
+          description: Información del perfil actualizada correctamente.
         400:
-        description: Error en los datos de entrada
+          description: Error en los datos de entrada.
         401:
-        description: Usuario no autenticado
+          description: No autorizado, el usuario no ha iniciado sesión.
     """
 
     data={
@@ -266,43 +272,43 @@ def profile():
 @login_required
 def update_profile():
     """
-    Actualización del perfil del usuario
+    Actualiza la información del perfil del usuario.
     ---
+    tags:
+      - User
     get:
-    description: Muestra la página para actualizar el perfil del usuario autenticado
-    responses:
+      description: Muestra la página de actualización del perfil del usuario.
+      responses:
         200:
-        description: Página de actualización de perfil mostrada con éxito
+          description: Página de actualización del perfil mostrada correctamente.
         401:
-        description: Usuario no autenticado
+          description: No autorizado, el usuario no ha iniciado sesión.
 
     post:
-    description: Actualiza el perfil del usuario autenticado
-    parameters:
-        - name: name
+      description: Actualiza la información del perfil del usuario.
+      parameters:
+      - name: name
         in: formData
         type: string
         required: true
-        description: Nombre completo del usuario
-        - name: password
+        description: Nombre del usuario.
+      - name: password
         in: formData
         type: string
         required: false
-        description: Nueva contraseña del usuario (opcional)
-        - name: confirm_password
+        description: Nueva contraseña del usuario (opcional).
+      - name: confirm_password
         in: formData
         type: string
         required: false
-        description: Confirmación de la nueva contraseña del usuario (opcional)
+        description: Confirmación de la nueva contraseña del usuario (opcional).
     responses:
         200:
-        description: Perfil actualizado con éxito
+          description: Información del perfil actualizada correctamente.
         400:
-        description: Error en los datos de entrada
+          description: Error en los datos de entrada.
         401:
-        description: Usuario no autenticado
-        409:
-        description: Las contraseñas no coinciden
+          description: No autorizado, el usuario no ha iniciado sesión.
     """
 
     if request.method == 'POST':
@@ -323,56 +329,59 @@ def update_profile():
 @login_required
 def delete_user():
     """
-    Eliminación de cuenta de usuario
+    Elimina la cuenta del usuario.
     ---
+    tags:
+      - User
     get:
-    description: Muestra la página para eliminar la cuenta de usuario
-    responses:
+      description: Muestra la página de eliminación de la cuenta del usuario.
+      responses:
         200:
-        description: Página de eliminación de cuenta mostrada con éxito
+          description: Página de eliminación de cuenta mostrada correctamente.
         401:
-        description: Usuario no autenticado
+          description: No autorizado, el usuario no ha iniciado sesión.
 
     post:
-    description: Elimina la cuenta del usuario autenticado
-    parameters:
-        - name: user_id
+      description: Elimina la cuenta del usuario autenticado.
+      parameters:
+      - name: user_id
         in: formData
         type: integer
         required: true
-        description: ID del usuario a eliminar
+        description: ID del usuario a eliminar.
     responses:
         200:
-        description: Usuario eliminado con éxito
+          description: Usuario eliminado con éxito.
         400:
-        description: Error en los datos de entrada
+          description: Error en los datos de entrada.
         401:
-        description: Usuario no autenticado
+          description: No autorizado, el usuario no ha iniciado sesión.
         403:
-        description: No tienes permiso para eliminar esta cuenta
+          description: Prohibido, el usuario no tiene permiso para eliminar esta cuenta.
         404:
-        description: Usuario no encontrado
+          description: Usuario no encontrado.
 
     delete:
-    description: Elimina la cuenta del usuario autenticado
-    parameters:
-        - name: user_id
+      description: Elimina la cuenta del usuario autenticado.
+      parameters:
+      - name: user_id
         in: formData
         type: integer
         required: true
-        description: ID del usuario a eliminar
+        description: ID del usuario a eliminar.
     responses:
         200:
-        description: Usuario eliminado con éxito
+          description: Usuario eliminado con éxito.
         400:
-        description: Error en los datos de entrada
+          description: Error en los datos de entrada.
         401:
-        description: Usuario no autenticado
+           description: No autorizado, el usuario no ha iniciado sesión.
         403:
-        description: No tienes permiso para eliminar esta cuenta
+          description: Prohibido, el usuario no tiene permiso para eliminar esta cuenta.
         404:
-        description: Usuario no encontrado
+          description: Usuario no encontrado.
     """
+
 
     user_id = request.form['user_id']
     if current_user.id != int(user_id):

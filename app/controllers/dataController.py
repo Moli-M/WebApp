@@ -20,59 +20,41 @@ from utils import gen_grafico, gen_grafico2, ejecutar_script, borrar_graficos
 
 dataController = Blueprint('dataController', __name__, template_folder='templates')
 
-@dataController.route('/upload')
-@login_required
-def upload():
-    """
-    Carga de datos
-    ---
-    get:
-    description: Muestra la página de carga de datos
-    responses:
-        200:
-        description: Página de carga mostrada con éxito
-        401:
-        description: Usuario no autenticado
-    """
-
-    borrar_graficos()
-    data={
-        'titulo': 'Upload'
-    }
-    return render_template('upload.html', data=data)
-
 @dataController.route('/procesar', methods=['POST', 'GET'])
 @login_required
 def procesar():
     """
-    Procesamiento de archivo de datos
+    Procesa un archivo enviado por el usuario y muestra los resultados.
     ---
-    get:
-    description: Muestra la página para procesar un archivo de datos
-    responses:
-        200:
-        description: Página de procesamiento mostrada con éxito
-        401:
-        description: Usuario no autenticado
-
-    post:
-    description: Procesa un archivo de datos subido por el usuario
+    tags:
+        - Data
     parameters:
-        - name: archivo
+      - name: archivo
         in: formData
         type: file
         required: true
-        description: Archivo a procesar (formato .txt o .csv)
+        description: Archivo (formato .txt o .csv) a procesar.
+
     responses:
-        200:
-        description: Archivo procesado con éxito
-        400:
-        description: Error en los datos de entrada
-        401:
-        description: Usuario no autenticado
-        415:
-        description: Formato de archivo no permitido, sube un archivo .txt o .csv
+      200:
+        description: Resultados del procesamiento mostrados correctamente.
+        schema:
+          type: object
+          properties:
+            titulo:
+              type: string
+              description: Título de la página
+            cont:
+              type: integer
+              description: Contador inicializado en 1
+            archivo:
+              type: string
+              description: Ruta del archivo generado (imagen)
+            probabilidades:
+              type: object
+              description: Resultados de probabilidades generados
     """
+
 
     if request.method == 'POST':
         if 'archivo' not in request.files:
@@ -85,7 +67,6 @@ def procesar():
             resultado_script = ejecutar_script(archivo_path)
             print(resultado_script)
             probabilidades = gen_grafico(resultado_script)
-            #probabilidades_lista = [str(item) for sublist in resultado_script for item in sublist]
             res = History(result=str(probabilidades), uid=current_user.id)
             db.session.add(res)
             db.session.commit()
@@ -99,27 +80,41 @@ def procesar():
 
         return 'Formato de archivo no permitido. Por favor, sube un archivo .txt o .csv.'
 
-@dataController.route('/history/<int:history_id>')
+@dataController.route('/history/<int:history_id>', methods=['POST', 'GET', 'DELETE'])
 @login_required
 def history_details(history_id):
     """
-    Detalles del historial
+    Obtiene los detalles del historial especificado por su ID.
     ---
-    get:
-    description: Muestra los detalles de un historial específico
+    tags:
+        - Data
     parameters:
-        - name: history_id
+      - name: history_id
         in: path
         type: integer
         required: true
-        description: ID del historial
+        description: ID del historial a obtener.
+
     responses:
-        200:
-        description: Detalles del historial mostrados con éxito
-        401:
-        description: Usuario no autenticado
-        404:
-        description: Historial no encontrado
+      200:
+        description: Detalles del historial obtenidos correctamente.
+        schema:
+        type: object
+        properties:
+            titulo:
+              type: string
+              description: Título de la página
+            historial:
+              type: object
+              description: Detalles del historial
+            archivo:
+              type: string
+              description: Ruta del archivo generado (imagen)
+            probabilidades:
+              type: object
+              description: Resultados de probabilidades generados
+      404:
+        description: Historial no encontrado.
     """
 
     historial = History.query.get_or_404(history_id)
@@ -141,16 +136,35 @@ def history_details(history_id):
 @login_required
 def history():
     """
-    Historial de resultados
+    Obtiene el historial de procesamientos del usuario actual.
     ---
-    get:
-    description: Muestra el historial de resultados del usuario autenticado
+    tags:
+        - Data
     responses:
-        200:
-        description: Historial mostrado con éxito
-        401:
-        description: Usuario no autenticado
+      200:
+        description: Historial obtenido correctamente.
+        schema:
+        type: object
+        properties:
+            titulo:
+              type: string
+              description: Título de la página
+            historiales:
+              type: array
+              items:
+                type: object
+                properties:
+                id:
+                    type: integer
+                    description: ID del historial
+                result:
+                    type: string
+                    description: Resultado del procesamiento
+                uid:
+                    type: integer
+                    description: ID del usuario
     """
+
 
     borrar_graficos()
     historiales = History.query.filter_by(uid=current_user.id).all()
@@ -160,3 +174,30 @@ def history():
         'titulo': 'Historial'
     }
     return render_template('history.html', data=data)
+
+@dataController.route('/history/delete/<int:history_id>', methods=['POST', 'GET', 'DELETE'])
+@login_required
+def delete_history(history_id):
+    """
+    Elimina un historial especificado por su ID.
+    ---
+    tags:
+        - Data
+    parameters:
+      - name: history_id
+        in: path
+        type: integer
+        required: true
+        description: ID del historial a eliminar.
+
+    responses:
+      200:
+        description: Historial eliminado correctamente.
+      404:
+        description: Historial no encontrado.
+    """
+
+    historial = History.query.get_or_404(history_id)
+    db.session.delete(historial)
+    db.session.commit()
+    return redirect(url_for('dataController.history'))

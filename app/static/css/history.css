@@ -42,3 +42,23 @@ tr {
     background-color: white;
     border-bottom: 10px solid lightblue;
 }
+
+.del-history-button {
+    background-color: red;
+    width: 100%;
+    border: none;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5%;
+    cursor: pointer;
+    vertical-align: bottom;
+}
+
+.delete-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 150px; /* Ajusta el ancho del botón según sea necesario */
+    margin-bottom: 120px;
+    margin-right: 50px;
+}

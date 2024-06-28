@@ -20,10 +20,14 @@ from utils import gen_grafico, gen_grafico2, ejecutar_script, borrar_graficos
 from controllers.userController import userController
 from controllers.dataController import dataController
 
+from flasgger import Swagger
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = 'test'
+app.secret_key = 'password'
+
+swagger = Swagger(app)
 
 db.init_app(app)
 
@@ -45,6 +49,27 @@ with app.app_context():
 
 @app.route('/')
 def index():
+    """
+    Renderiza la página principal de la aplicación.
+    ---
+    tags:
+        - Index
+    responses:
+      200:
+        description: Página principal renderizada correctamente.
+        schema:
+          type: object
+          properties:
+            titulo:
+              type: string
+              description: Título de la página
+            encabezado:
+              type: string
+              description: Texto del encabezado
+            cont:
+              type: integer
+              description: Contador inicializado en 0
+    """
     borrar_graficos()
     data={
         'titulo': 'Index',
@@ -52,17 +77,6 @@ def index():
         'cont': 0
     }
     return render_template('index.html', data=data)
-
-@app.route('/prueba', methods=['POST', 'GET'])
-@login_required
-def prueba():
-    data = {
-        'titulo': 'Resultado del script',	
-        'cont': 1,
-        'archivo': 'img/grafico.png'
-    }
-    return render_template("index.html", data = data)
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)
