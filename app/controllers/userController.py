@@ -145,7 +145,6 @@ def login():
             login_user(user)
             return redirect(url_for('index'))
         else:
-            #return 'Login fallido. Por favor, verifica tus credenciales.'
             flash('Login fallido. Por favor, verifica tus credenciales.', 'error')
     data={
         'titulo': 'Inicio de sesión',
